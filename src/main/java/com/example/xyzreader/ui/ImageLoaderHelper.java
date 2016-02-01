@@ -11,6 +11,8 @@ import com.android.volley.toolbox.Volley;
 public class ImageLoaderHelper {
     private static ImageLoaderHelper sInstance;
 
+    private static final String LOG_TAG = ImageLoaderHelper.class.getName();
+
     public static ImageLoaderHelper getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new ImageLoaderHelper(context.getApplicationContext());

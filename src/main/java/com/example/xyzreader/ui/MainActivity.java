@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout; //seems to be unused ...
     private RecyclerView mRecyclerView;
+    private static final String LOG_TAG = MainActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+            Log.v(LOG_TAG, "onBindViewHolder, " + "holder = [" + holder + "], position = [" + position + "]");
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
 
