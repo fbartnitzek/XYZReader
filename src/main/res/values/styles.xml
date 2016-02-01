@@ -23,6 +23,8 @@
         <item name="colorAccent">@color/accent_200</item>
     </style>
 
-    <style name="Theme.Bacon.Detail"/>
+    <style name="Theme.Bacon.Detail">
+        <!--<item name="statusBarColor">@android:color/transparent</item>-->
+    </style>
 
 </resources>

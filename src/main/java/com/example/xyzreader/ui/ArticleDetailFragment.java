@@ -29,7 +29,7 @@ import com.example.xyzreader.data.ArticleLoader;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
- * either contained in a {@link ArticleListActivity} in two-pane mode (on
+ * either contained in a {@link MainActivity} in two-pane mode (on
  * tablets) or a {@link ArticleDetailActivity} on handsets.
  */
 public class ArticleDetailFragment extends Fragment implements
