@@ -42,16 +42,17 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <!-- clipToPadding: while scrolling the list is directly beneath actionBar (no padding) -->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:scrollbarStyle="outsideOverlay"
-            android:paddingTop="4dp"
-            android:paddingLeft="@dimen/list_side_margin"
-            android:paddingRight="@dimen/list_side_margin"
-            android:paddingBottom="4dp"/>
+            android:clipToPadding="true"
+            android:scrollbarStyle="outsideOverlay"/>
+            <!--android:paddingTop="4dp"-->
+            <!--android:paddingLeft="@dimen/list_side_margin"-->
+            <!--android:paddingRight="@dimen/list_side_margin"-->
+            <!--android:paddingBottom="4dp"-->
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

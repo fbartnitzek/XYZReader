@@ -2,8 +2,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light"
+    android:fitsSystemWindows="true">
+    <!-- fitsSystemWindows: colors background of SystemWindows with the picture -->
+    <!-- TODO: colors ... -->
     <!-- content:
         ImageView
         background-View?
@@ -17,7 +20,8 @@
         android:id="@+id/toolbar_container"
         android:layout_width="match_parent"
         android:layout_height="168dp"
-        android:background="?colorPrimary">
+        android:fitsSystemWindows="true">
+        <!--android:background="?colorPrimary"-->
 
         <!-- from parallax-sample -->
         <android.support.design.widget.CollapsingToolbarLayout
@@ -26,133 +30,144 @@
             android:layout_height="match_parent"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
-            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:fitsSystemWindows="true">
+            <!--app:contentScrim="?attr/colorPrimary"-->
+
+            <!--app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"-->
+            <!--collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"-->
 
             <ImageView
-                android:id="@+id/photo"
+                android:id="@+id/toolbar_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_collapseMode="parallax"
+                android:contentDescription="@string/app_name"
                 android:src="@drawable/logo"
-                android:contentDescription="@string/app_name"/>
+                app:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"/>
 
+            <!-- contentInsetStart: title starts at padding to left... -->
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                android:id="@+id/toolbar_text"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:layout_gravity="bottom"
-                app:layout_scrollFlags="scroll|enterAlways"/>
+                android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:layout_collapseMode="pin"/>
+            <!--android:layout_gravity="bottom"-->
+            <!--app:layout_scrollFlags="scroll|enterAlways"-->
+            <!--app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+    <!-- just TextView does not work, ScrollView and TextView also not working -->
+    <!-- without scrollView no scrolling - quite self-explaining... -->
+    <!-- without app:layout_behavior="@string/appbar_scrolling_view_behavior" the textView starts at the top -->
+
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="true"
-        android:layout_marginBottom="56dp"
-        android:padding="8dp">
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <!--android:layout_marginBottom="56dp"-->
 
         <TextView
             android:id="@+id/article_body"
+            style="?android:attr/textAppearanceMedium"
+            android:clipToPadding="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceMedium"/>
+            android:layout_height="wrap_content"/>
 
-    </ScrollView>
-
-
+    </android.support.v4.widget.NestedScrollView>
 
 
     <!--<com.example.xyzreader.ui.ObservableScrollView-->
-        <!--android:id="@+id/scrollview"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <!--android:id="@+id/scrollview"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-        <!--<FrameLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
+    <!--<FrameLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content">-->
 
-            <!--<FrameLayout-->
-                <!--android:id="@+id/photo_container"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="@color/photo_placeholder">-->
-                <!--&lt;!&ndash;suppress AndroidLintContentDescription &ndash;&gt;-->
-                <!--<ImageView-->
-                    <!--android:id="@+id/photo"-->
-                    <!--android:layout_width="100dp"-->
-                    <!--android:layout_height="100dp"-->
-                    <!--/>-->
+    <!--<FrameLayout-->
+    <!--android:id="@+id/photo_container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:background="@color/photo_placeholder">-->
+    <!--&lt;!&ndash;suppress AndroidLintContentDescription &ndash;&gt;-->
+    <!--<ImageView-->
+    <!--android:id="@+id/photo"-->
+    <!--android:layout_width="100dp"-->
+    <!--android:layout_height="100dp"-->
+    <!--/>-->
 
-                <!--<View-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="112dp"-->
-                    <!--android:background="@drawable/photo_background_protection"/>-->
+    <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="112dp"-->
+    <!--android:background="@drawable/photo_background_protection"/>-->
 
-            <!--</FrameLayout>-->
+    <!--</FrameLayout>-->
 
-            <!--<com.example.xyzreader.ui.MaxWidthLinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:layout_marginTop="@dimen/detail_card_top_margin"-->
-                <!--android:background="#fff"-->
-                <!--android:elevation="2dp"-->
-                <!--android:maxWidth="@dimen/detail_card_max_width"-->
-                <!--android:orientation="vertical">-->
+    <!--<com.example.xyzreader.ui.MaxWidthLinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_horizontal"-->
+    <!--android:layout_marginTop="@dimen/detail_card_top_margin"-->
+    <!--android:background="#fff"-->
+    <!--android:elevation="2dp"-->
+    <!--android:maxWidth="@dimen/detail_card_max_width"-->
+    <!--android:orientation="vertical">-->
 
-                <!--<LinearLayout-->
-                    <!--android:id="@+id/meta_bar"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="bottom"-->
-                    <!--android:layout_marginBottom="@dimen/detail_metabar_vert_padding"-->
-                    <!--android:background="#333"-->
-                    <!--android:orientation="vertical"-->
-                    <!--android:paddingBottom="@dimen/detail_metabar_vert_padding"-->
-                    <!--android:paddingLeft="@dimen/detail_inner_horiz_margin"-->
-                    <!--android:paddingRight="@dimen/detail_inner_horiz_margin"-->
-                    <!--android:paddingTop="@dimen/detail_metabar_vert_padding">-->
+    <!--<LinearLayout-->
+    <!--android:id="@+id/meta_bar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="bottom"-->
+    <!--android:layout_marginBottom="@dimen/detail_metabar_vert_padding"-->
+    <!--android:background="#333"-->
+    <!--android:orientation="vertical"-->
+    <!--android:paddingBottom="@dimen/detail_metabar_vert_padding"-->
+    <!--android:paddingLeft="@dimen/detail_inner_horiz_margin"-->
+    <!--android:paddingRight="@dimen/detail_inner_horiz_margin"-->
+    <!--android:paddingTop="@dimen/detail_metabar_vert_padding">-->
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/article_title"-->
-                        <!--style="?android:attr/textAppearanceLarge"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:fontFamily="sans-serif-condensed"-->
-                        <!--android:lineSpacingMultiplier="0.9"-->
-                        <!--android:paddingBottom="@dimen/detail_metabar_title_bottom_padding"-->
-                        <!--android:textColor="#fff"-->
-                        <!--android:textSize="@dimen/detail_title_text_size"-->
-                        <!--android:textStyle="bold"/>-->
+    <!--<TextView-->
+    <!--android:id="@+id/article_title"-->
+    <!--style="?android:attr/textAppearanceLarge"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:fontFamily="sans-serif-condensed"-->
+    <!--android:lineSpacingMultiplier="0.9"-->
+    <!--android:paddingBottom="@dimen/detail_metabar_title_bottom_padding"-->
+    <!--android:textColor="#fff"-->
+    <!--android:textSize="@dimen/detail_title_text_size"-->
+    <!--android:textStyle="bold"/>-->
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/article_byline"-->
-                        <!--style="?android:attr/textAppearanceSmall"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:textColor="#8fff"/>-->
-                <!--</LinearLayout>-->
+    <!--<TextView-->
+    <!--android:id="@+id/article_byline"-->
+    <!--style="?android:attr/textAppearanceSmall"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textColor="#8fff"/>-->
+    <!--</LinearLayout>-->
 
-                <!--<TextView-->
-                    <!--android:id="@+id/article_body"-->
-                    <!--style="?android:attr/textAppearanceMedium"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginLeft="@dimen/detail_inner_horiz_margin"-->
-                    <!--android:layout_marginRight="@dimen/detail_inner_horiz_margin"-->
-                    <!--android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"-->
-                    <!--android:paddingBottom="@dimen/detail_body_bottom_margin"-->
-                    <!--android:textColor="@color/primary_300"-->
-                    <!--android:textColorLink="@color/accent_200"-->
-                    <!--android:textSize="@dimen/detail_body_text_size"/>-->
+    <!--<TextView-->
+    <!--android:id="@+id/article_body"-->
+    <!--style="?android:attr/textAppearanceMedium"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="@dimen/detail_inner_horiz_margin"-->
+    <!--android:layout_marginRight="@dimen/detail_inner_horiz_margin"-->
+    <!--android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"-->
+    <!--android:paddingBottom="@dimen/detail_body_bottom_margin"-->
+    <!--android:textColor="@color/primary_300"-->
+    <!--android:textColorLink="@color/accent_200"-->
+    <!--android:textSize="@dimen/detail_body_text_size"/>-->
 
-            <!--</com.example.xyzreader.ui.MaxWidthLinearLayout>-->
-        <!--</FrameLayout>-->
+    <!--</com.example.xyzreader.ui.MaxWidthLinearLayout>-->
+    <!--</FrameLayout>-->
     <!--</com.example.xyzreader.ui.ObservableScrollView>-->
 
     <android.support.design.widget.FloatingActionButton
