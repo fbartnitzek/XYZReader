@@ -44,9 +44,6 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_article_list);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
-//        final View toolbarContainerView = findViewById(R.id.toolbar_container);
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -112,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setAdapter(null);
     }
 
+
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
 
@@ -119,21 +117,27 @@ public class MainActivity extends AppCompatActivity implements
             mCursor = cursor;
         }
 
-        @Override
-        public long getItemId(int position) {
+        private long getIdFromPosition(int position) {
+            Log.v(LOG_TAG, "getIdFromPosition, " + "position = [" + position + "]");
+            int oldPosition = mCursor.getPosition();
             mCursor.moveToPosition(position);
-            return mCursor.getLong(ArticleLoader.Query._ID);
+            long id = mCursor.getLong(ArticleLoader.Query._ID);
+            mCursor.moveToPosition(oldPosition);
+            return id;
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Log.v(LOG_TAG, "onCreateViewHolder, " + "parent = [" + parent + "], viewType = [" + viewType + "]");
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder vh = new ViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Log.v(LOG_TAG, "onClick, " + "view = [" + view + "], adapterPosition: " + vh.getAdapterPosition());
                     startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
+                            ItemsContract.Items.buildItemUri(
+                                    getIdFromPosition(vh.getAdapterPosition()))));
                 }
             });
             return vh;

@@ -11,9 +11,9 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -25,20 +25,19 @@ import com.example.xyzreader.data.ItemsContract;
 public class ArticleDetailActivity extends ActionBarActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG_TAG = ArticleDetailActivity.class.getName();
     private Cursor mCursor;
     private long mStartId;
 
     private long mSelectedItemId;   //TODO: should be stored...
-//    private int mSelectedItemUpButtonFloor = Integer.MAX_VALUE;
-//    private int mTopInset;
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
-//    private View mUpButtonContainer;
-//    private View mUpButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreate, " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -73,33 +72,8 @@ public class ArticleDetailActivity extends ActionBarActivity
                     mCursor.moveToPosition(position);
                 }
                 mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
-//                updateUpButtonPosition();
             }
         });
-
-//        mUpButtonContainer = findViewById(R.id.up_container);
-
-//        mUpButton = findViewById(R.id.action_up);
-//        mUpButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                onSupportNavigateUp();
-//            }
-//        });
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            mUpButtonContainer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-//                @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-//                @Override
-//                public WindowInsets onApplyWindowInsets(View view, WindowInsets windowInsets) {
-//                    view.onApplyWindowInsets(windowInsets);
-//                    mTopInset = windowInsets.getSystemWindowInsetTop();
-//                    mUpButtonContainer.setTranslationY(mTopInset);
-//                    updateUpButtonPosition();
-//                    return windowInsets;
-//                }
-//            });
-//        }
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
@@ -111,50 +85,35 @@ public class ArticleDetailActivity extends ActionBarActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.v(LOG_TAG, "onCreateLoader, " + "i = [" + i + "], bundle = [" + bundle + "]");
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.v(LOG_TAG, "onLoadFinished, " + "cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");
         mCursor = cursor;
         mPagerAdapter.notifyDataSetChanged();
 
         // Select the start ID from state
         if (mStartId > 0) {
             mCursor.moveToFirst();
-            // TODO: still optimize
             while (!mCursor.isAfterLast() && mCursor.getLong(ArticleLoader.Query._ID) != mStartId) {
-//                if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
-//                    // overrides previous ...
-////                    final int position = mCursor.getPosition();
-////                    mPager.setCurrentItem(position, false);
-//                    break;
-//                }
                 mCursor.moveToNext();
             }
-            final int position = mCursor.getPosition();
-            mPager.setCurrentItem(position, false);
+
+            Log.v(LOG_TAG, "onLoadFinished, " + "position: " + mCursor.getPosition());
+            mPager.setCurrentItem(mCursor.getPosition(), false);
             mStartId = 0;
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        Log.v(LOG_TAG, "onLoaderReset, " + "cursorLoader = [" + cursorLoader + "]");
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
     }
-
-//    public void onUpButtonFloorChanged(long itemId, ArticleDetailFragment fragment) {
-//        if (itemId == mSelectedItemId) {
-//            mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-//            updateUpButtonPosition();
-//        }
-//    }
-//
-//    private void updateUpButtonPosition() {
-//        int upButtonNormalBottom = mTopInset + mUpButton.getHeight();
-//        mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
-//    }
 
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {
@@ -162,18 +121,8 @@ public class ArticleDetailActivity extends ActionBarActivity
         }
 
         @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            super.setPrimaryItem(container, position, object);
-            // what might the primaryItem be - might be done with moveToPosition...?
-//            ArticleDetailFragment fragment = (ArticleDetailFragment) object;
-//            if (fragment != null) {
-//                mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-//                updateUpButtonPosition();
-//            }
-        }
-
-        @Override
         public Fragment getItem(int position) {
+            Log.v(LOG_TAG, "getItem, " + "position = [" + position + "]");
             mCursor.moveToPosition(position);
             return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
         }

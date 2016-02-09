@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -50,6 +52,11 @@ public class ArticleDetailFragment extends Fragment implements
      * fragment (e.g. upon screen orientation changes).
      */
     public ArticleDetailFragment() {
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public static ArticleDetailFragment newInstance(long itemId) {
@@ -130,20 +137,19 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-//        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
-//        TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
-//        bylineView.setMovementMethod(new LinkMovementMethod());
-//        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
-//        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
-
         mCollapsingToolbar.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
         mActionBar.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
         // TODO: author and date
-        mArticleView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+        mArticleView.setText(
+                getString(R.string.body_article,
+                        Utilities.formatTimeSpan(
+                                mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                                System.currentTimeMillis()),
+                        mCursor.getString(ArticleLoader.Query.AUTHOR),
+                        Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY))));
         Log.v(LOG_TAG, "bindViews, photo_url:" + mCursor.getString(ArticleLoader.Query.PHOTO_URL));
         Glide.with(getActivity())
                 .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
-//                .load("http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg")
                 .centerCrop()
                 .into(mPhotoView);
     }
