@@ -7,7 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
-    <!-- TODO: like cheesesquare-sample -->
     <!-- fitsSystemWindows: colors background of SystemWindows with the picture -->
     <!-- TODO: colors ... -->
 
@@ -29,7 +28,6 @@
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
-            <!--app:contentScrim="?attr/colorPrimary"-->
 
             <!--app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"-->
             <!--collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"-->
@@ -44,15 +42,16 @@
                 app:layout_collapseMode="parallax"/>
 
             <!-- contentInsetStart: title starts at padding to left... -->
+            <!-- scrollflags: https://guides.codepath.com/android/Handling-Scrolls-with-CoordinatorLayout -->
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_text"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:fitsSystemWindows="true"
                 android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin"/>
+                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways"/>
             <!--android:layout_gravity="bottom"-->
-            <!--app:layout_scrollFlags="scroll|enterAlways"-->
             <!--app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -65,15 +64,17 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <!--android:layout_marginBottom="56dp"-->
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp">
 
         <TextView
             android:id="@+id/article_body"
             style="?android:attr/textAppearanceMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="8dp"
             android:clipToPadding="true"/>
 
     </android.support.v4.widget.NestedScrollView>
@@ -87,6 +88,5 @@
         android:src="@drawable/ic_share"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"/>
-    <!--android:layout_gravity="bottom|end"-->
 
 </android.support.design.widget.CoordinatorLayout>
