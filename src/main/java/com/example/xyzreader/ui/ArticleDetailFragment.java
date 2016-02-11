@@ -130,6 +130,7 @@ public class ArticleDetailFragment extends Fragment implements
         return mRootView;
     }
 
+    //TODO: react on change with pagerView everywhere...
 
     private void bindViews() {
         Log.v(LOG_TAG, "bindViews, mCursor:" + mCursor);
@@ -139,7 +140,8 @@ public class ArticleDetailFragment extends Fragment implements
 
         mCollapsingToolbar.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
         mActionBar.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
-        // TODO: author and date
+
+
         mArticleView.setText(
                 getString(R.string.body_article,
                         Utilities.formatTimeSpan(
@@ -150,6 +152,8 @@ public class ArticleDetailFragment extends Fragment implements
         Log.v(LOG_TAG, "bindViews, photo_url:" + mCursor.getString(ArticleLoader.Query.PHOTO_URL));
         Glide.with(getActivity())
                 .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+                        // test against white background picture...
+//                .load("http://www.solidbackgrounds.com/images/1920x1080/1920x1080-white-solid-color-background.jpg")
                 .centerCrop()
                 .into(mPhotoView);
     }

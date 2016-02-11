@@ -26,4 +26,13 @@
         <item name="android:windowBackground">@color/window_background</item>
     </style>
 
+    <!--<style name="Widget.XYZReader.ActionBar.Solid" parent="Widget.AppCompat.ActionBar.Solid">-->
+        <!--<item name="android:background">@color/primary_700</item>-->
+        <!--<item name="elevation">4dp</item>-->
+    <!--</style>-->
+
+    <style name="ThemeOverlay.XYZReader.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/heading_white</item>
+    </style>
+
 </resources>

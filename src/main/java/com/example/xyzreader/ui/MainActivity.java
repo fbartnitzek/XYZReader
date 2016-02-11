@@ -116,18 +116,15 @@ public class MainActivity extends AppCompatActivity implements
             mCursor = cursor;
         }
 
-        private long getIdFromPosition(int position) {
-            Log.v(LOG_TAG, "getIdFromPosition, " + "position = [" + position + "]");
-            int oldPosition = mCursor.getPosition();
+        @Override
+        public long getItemId(int position) {
             mCursor.moveToPosition(position);
-            long id = mCursor.getLong(ArticleLoader.Query._ID);
-            mCursor.moveToPosition(oldPosition);
-            return id;
+            return mCursor.getLong(ArticleLoader.Query._ID);
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            Log.v(LOG_TAG, "onCreateViewHolder, " + "parent = [" + parent + "], viewType = [" + viewType + "]");
+//            Log.v(LOG_TAG, "onCreateViewHolder, " + "parent = [" + parent + "], viewType = [" + viewType + "]");
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder vh = new ViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
                     Log.v(LOG_TAG, "onClick, " + "view = [" + view + "], adapterPosition: " + vh.getAdapterPosition());
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             ItemsContract.Items.buildItemUri(
-                                    getIdFromPosition(vh.getAdapterPosition()))));
+                                    getItemId(vh.getAdapterPosition()))));
                 }
             });
             return vh;
@@ -144,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            Log.v(LOG_TAG, "onBindViewHolder, " + "holder = [" + holder + "], position = [" + position + "]");
+//            Log.v(LOG_TAG, "onBindViewHolder, " + "holder = [" + holder + "], position = [" + position + "]");
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
 

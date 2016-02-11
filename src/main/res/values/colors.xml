@@ -22,6 +22,7 @@
     <color name="primary_700">#00796b</color>
     <color name="accent_200">#64ffda</color>
     <color name="primary_300">#4db6ac</color>
+    <color name="heading_white">#ffffff</color>
     <color name="some_color">#8fff</color>
     <color name="window_background">#FFF5F5F5</color>
 </resources>

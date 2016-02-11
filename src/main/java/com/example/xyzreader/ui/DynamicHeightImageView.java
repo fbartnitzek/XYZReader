@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 public class DynamicHeightImageView extends ImageView {
-    // remove volley-lib...
+
     private float mAspectRatio = 1.5f;
 
     public DynamicHeightImageView(Context context) {
