@@ -1,10 +1,7 @@
 package com.example.xyzreader.ui;
 
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ShareCompat;
@@ -23,25 +20,22 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.xyzreader.R;
-import com.example.xyzreader.data.ArticleLoader;
+import com.example.xyzreader.data.Article;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
  * either contained in a {@link MainActivity} in two-pane mode (on
  * tablets) or a {@link ArticleDetailActivity} on handsets.
  */
-public class ArticleDetailFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class ArticleDetailFragment extends Fragment{
     private static final String LOG_TAG = ArticleDetailFragment.class.getName();
 
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_ARTICLE = "arg_article";
 
-    private Cursor mCursor;
-    private long mItemId;
+    private Article mArticle;
     private View mRootView;
 
     private ImageView mPhotoView;
-
     private CollapsingToolbarLayout mCollapsingToolbar;
 
     private ActionBar mActionBar;
@@ -59,11 +53,13 @@ public class ArticleDetailFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public static ArticleDetailFragment newInstance(long itemId) {
+    public static ArticleDetailFragment newInstance(Article article) {
+        Log.v(LOG_TAG, "newInstance" + ", " + "article = [" + article + "]");
         Bundle arguments = new Bundle();
-        arguments.putLong(ARG_ITEM_ID, itemId);
+        arguments.putParcelable(ARG_ARTICLE, article);
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         fragment.setArguments(arguments);
+        Log.v(LOG_TAG, "newInstance, " + "article= [" + article+ "], hashcode=" + fragment.hashCode());
         return fragment;
     }
 
@@ -71,34 +67,20 @@ public class ArticleDetailFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            mItemId = getArguments().getLong(ARG_ITEM_ID);
+        if (getArguments().containsKey(ARG_ARTICLE)) {
+            mArticle = getArguments().getParcelable(ARG_ARTICLE);
         }
 
         setHasOptionsMenu(true);
     }
 
-    //???
-    public ArticleDetailActivity getActivityCast() {
-        return (ArticleDetailActivity) getActivity();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
-        // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
-        // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
-        // we do this in onActivityCreated.
-        getLoaderManager().initLoader(0, null, this);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
-        Log.v(LOG_TAG, "onCreateView, " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
+        Log.v(LOG_TAG, "onCreateView, hashcode=" + this.hashCode() + ", inflater = [" + inflater
+                + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.toolbar_photo);
 
@@ -121,73 +103,53 @@ public class ArticleDetailFragment extends Fragment implements
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
                         .setType("text/plain")
-                        .setText("Some sample text")
+                        .setText(mArticle == null ? "Some sample text" :
+                                mArticle.getTitle() + " by " + mArticle.getAuthor())
                         .getIntent(), getString(R.string.action_share)));
             }
         });
 
         bindViews();
+
+        // worked once - but stopped working ...
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            Log.v(LOG_TAG, "onCreate, " + "sliding in ...?");
+//            Slide slide = new Slide(Gravity.BOTTOM);
+//            slide.addTarget(R.id.article_body);
+//            slide.setInterpolator(
+//                    AnimationUtils.loadInterpolator(
+//                            getActivity(), android.R.interpolator.linear_out_slow_in));
+//            slide.setDuration(1000L);
+//            getActivity().getWindow().setEnterTransition(slide);
+//        }
+
         return mRootView;
     }
 
-    //TODO: react on change with pagerView everywhere...
-
     private void bindViews() {
-        Log.v(LOG_TAG, "bindViews, mCursor:" + mCursor);
-        if (mRootView == null || mCursor == null) {
+        Log.v(LOG_TAG, "bindViews, hashCode=" + this.hashCode() + ", " + "");
+        if (mRootView == null || mArticle == null) {
             return;
         }
 
-        mCollapsingToolbar.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
-        mActionBar.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
-
+        mCollapsingToolbar.setTitle(mArticle.getTitle());
+        mActionBar.setTitle(mArticle.getTitle());
 
         mArticleView.setText(
                 getString(R.string.body_article,
                         Utilities.formatTimeSpan(
-                                mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                                mArticle.getPublishedDate(),
                                 System.currentTimeMillis()),
-                        mCursor.getString(ArticleLoader.Query.AUTHOR),
-                        Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY))));
-        Log.v(LOG_TAG, "bindViews, photo_url:" + mCursor.getString(ArticleLoader.Query.PHOTO_URL));
+                        mArticle.getAuthor(),
+                        Html.fromHtml(mArticle.getBody())));
+        Log.v(LOG_TAG, "bindViews, hashCode=" + this.hashCode() + ", photo_url:" + mArticle.getPhotoUrl());
+
         Glide.with(getActivity())
-                .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+                .load(mArticle.getPhotoUrl())
                         // test against white background picture...
 //                .load("http://www.solidbackgrounds.com/images/1920x1080/1920x1080-white-solid-color-background.jpg")
                 .centerCrop()
                 .into(mPhotoView);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.v(LOG_TAG, "onLoadFinished, " + "cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");
-        if (!isAdded()) {
-            if (cursor != null) {
-                cursor.close();
-            }
-            return;
-        }
-
-        mCursor = cursor;
-        if (mCursor != null && !mCursor.moveToFirst()) {
-            Log.e(LOG_TAG, "Error reading item detail cursor");
-            mCursor.close();
-            mCursor = null;
-        }
-
-        bindViews();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mCursor = null;
-        Log.v(LOG_TAG, "onLoaderReset, " + "cursorLoader = [" + cursorLoader + "]");
-        bindViews();
     }
 
 }

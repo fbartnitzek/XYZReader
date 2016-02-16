@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui;
 
+import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,11 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -32,21 +29,45 @@ import com.example.xyzreader.data.UpdaterService;
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-//    private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout; //seems to be unused ...
     private RecyclerView mRecyclerView;
     private static final String LOG_TAG = MainActivity.class.getName();
+    private ArticleAdapter mArticleAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(LOG_TAG, "onCreate, " + "savedInstanceState = [" + savedInstanceState + "]");
         setContentView(R.layout.activity_article_list);
 
-//        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
+
+        mArticleAdapter = new ArticleAdapter(this, new ArticleAdapter.ArticleAdapterOnClickHandler() {
+            @Override
+            public void onClick(long id, ArticleAdapter.ArticleViewHolder vh) {
+                Log.v(LOG_TAG, "onClick, " + "id = [" + id + "], vh = [" + vh + "]");
+                Bundle bundle = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    bundle = ActivityOptions
+                            .makeSceneTransitionAnimation(
+                                    MainActivity.this,
+                                    vh.thumbnailView,
+                                    getString(R.string.transition_name_image_view))
+                            .toBundle();
+                }
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        ItemsContract.Items.buildItemUri(id)), bundle);
+            }
+        });
+        mRecyclerView.setAdapter(mArticleAdapter);
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        StaggeredGridLayoutManager sglm =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(sglm);
 
         // TODO: restore?
         if (savedInstanceState == null) {
@@ -89,93 +110,29 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.v(LOG_TAG, "onCreateLoader, " + "i = [" + i + "], bundle = [" + bundle + "]");
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Adapter adapter = new Adapter(cursor);
-        adapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(adapter);
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
-        StaggeredGridLayoutManager sglm =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(sglm);
+        Log.v(LOG_TAG, "onLoadFinished, " + "cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");
+        mArticleAdapter.swapCursor(cursor);
+        // optional some preDraw-stuff...
+//        Adapter adapter = new Adapter(cursor);
+//        adapter.setHasStableIds(true);
+//        mRecyclerView.setAdapter(adapter);
+//        int columnCount = getResources().getInteger(R.integer.list_column_count);
+//        StaggeredGridLayoutManager sglm =
+//                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+//        mRecyclerView.setLayoutManager(sglm);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mRecyclerView.setAdapter(null);
+//        mRecyclerView.setAdapter(null);
+        Log.v(LOG_TAG, "onLoaderReset, " + "loader = [" + loader + "]");
+        mArticleAdapter.swapCursor(null);
     }
 
-
-    private class Adapter extends RecyclerView.Adapter<ViewHolder> {
-        private Cursor mCursor;
-
-        public Adapter(Cursor cursor) {
-            mCursor = cursor;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            mCursor.moveToPosition(position);
-            return mCursor.getLong(ArticleLoader.Query._ID);
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//            Log.v(LOG_TAG, "onCreateViewHolder, " + "parent = [" + parent + "], viewType = [" + viewType + "]");
-            View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-            final ViewHolder vh = new ViewHolder(view);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.v(LOG_TAG, "onClick, " + "view = [" + view + "], adapterPosition: " + vh.getAdapterPosition());
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(
-                                    getItemId(vh.getAdapterPosition()))));
-                }
-            });
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-//            Log.v(LOG_TAG, "onBindViewHolder, " + "holder = [" + holder + "], position = [" + position + "]");
-            mCursor.moveToPosition(position);
-            holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-
-            holder.subtitleView.setText(
-                    getString(R.string.subtitle_text,
-                            Utilities.formatTimeSpan(
-                                    mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-                                    System.currentTimeMillis()),
-                            mCursor.getString(ArticleLoader.Query.AUTHOR)
-                    ));
-
-            Glide.with(getApplicationContext())
-                    .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
-                    .centerCrop()
-                    .into(holder.thumbnailView);
-            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-        }
-
-        @Override
-        public int getItemCount() {
-            return mCursor.getCount();
-        }
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public DynamicHeightImageView thumbnailView;
-        public TextView titleView;
-        public TextView subtitleView;
-
-        public ViewHolder(View view) {
-            super(view);
-            thumbnailView = (DynamicHeightImageView) view.findViewById(R.id.thumbnail);
-            titleView = (TextView) view.findViewById(R.id.article_title);
-            subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
-        }
-    }
 }

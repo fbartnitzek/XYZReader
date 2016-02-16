@@ -3,5 +3,11 @@
     <style name="Theme.Bacon" parent="Base.Theme.Bacon">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowContentTransitions">true</item>
+        <!--<item name="android:windowExitTransition">@transition/list_exit</item>-->
+    </style>
+
+    <style name="Theme.Bacon.Home">
+
     </style>
 </resources>
