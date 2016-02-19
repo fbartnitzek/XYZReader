@@ -29,10 +29,25 @@ import com.example.xyzreader.data.UpdaterService;
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String CURRENT_POSITION = "current_position";
     private SwipeRefreshLayout mSwipeRefreshLayout; //seems to be unused ...
     private RecyclerView mRecyclerView;
     private static final String LOG_TAG = MainActivity.class.getName();
     private ArticleAdapter mArticleAdapter;
+    private int mPosition = RecyclerView.NO_POSITION;
+
+
+    private BroadcastReceiver mBroadcastReceiver =
+            new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if (intent.hasExtra(ArticleDetailActivity.CURSOR_POSITION)) {
+                        mPosition = intent.getIntExtra(ArticleDetailActivity.CURSOR_POSITION, 0);
+                        Log.v(LOG_TAG, "BroadcastReceiver.onReceive, hashCode=" + this.hashCode()
+                                + ", mPosition=" + mPosition + ", " + "context = [" + context + "], intent = [" + intent + "]");
+                    }
+                }
+            };
 
 
     @Override
@@ -67,7 +82,11 @@ public class MainActivity extends AppCompatActivity implements
         int columnCount = getResources().getInteger(R.integer.list_column_count);
         StaggeredGridLayoutManager sglm =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+        //TODO: sglm.strategies...?
         mRecyclerView.setLayoutManager(sglm);
+
+        registerReceiver(mBroadcastReceiver,
+                new IntentFilter(ArticleDetailActivity.BROADCAST_POSITION_CHANGE));
 
         // TODO: restore?
         if (savedInstanceState == null) {
@@ -81,15 +100,39 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onStart() {
+        Log.v(LOG_TAG, "onStart, hashCode=" + this.hashCode() + ", " + "");
         super.onStart();
         registerReceiver(mRefreshingReceiver,
                 new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
+        if (mRecyclerView != null) {
+//            Log.v(LOG_TAG, "onStart, hashCode=" + this.hashCode() + ", with recyclerview" + "");
+            if (mPosition != RecyclerView.NO_POSITION){
+                mRecyclerView.scrollToPosition(mPosition);
+            }
+        } else {
+//            Log.v(LOG_TAG, "onStart, hashCode=" + this.hashCode() + ", without recyclerview..." + "");
+        }
     }
 
     @Override
     protected void onStop() {
+//        Log.v(LOG_TAG, "onStop, hashCode=" + this.hashCode() + ", " + "");
         super.onStop();
         unregisterReceiver(mRefreshingReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBroadcastReceiver != null){
+            unregisterReceiver(mBroadcastReceiver);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(CURRENT_POSITION, mPosition);
+        super.onSaveInstanceState(outState);
     }
 
     private boolean mIsRefreshing = false;
@@ -116,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        //TODO: 2 times in log...?
         Log.v(LOG_TAG, "onLoadFinished, " + "cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");
         mArticleAdapter.swapCursor(cursor);
         // optional some preDraw-stuff...

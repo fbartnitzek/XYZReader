@@ -3,6 +3,7 @@ package com.example.xyzreader.ui;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
@@ -25,6 +26,10 @@ public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, ViewPager.OnPageChangeListener {
 
     private static final String LOG_TAG = ArticleDetailActivity.class.getName();
+    private static final String STATE_SELECTED_ITEM = "state_selected_item";
+    public static final String CURSOR_POSITION = "cursor_position";
+    public static final String BROADCAST_POSITION_CHANGE
+            = "com.example.xyzreader.intent.action.POSITION_CHANGE";
     private Cursor mCursor;
     private long mStartId;
 
@@ -62,6 +67,12 @@ public class ArticleDetailActivity extends AppCompatActivity
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
                 mSelectedItemId = mStartId;
             }
+        } else {    // TODO: side effects?
+            if (getIntent() == null || getIntent().getData() == null) {
+                if (savedInstanceState.containsKey(STATE_SELECTED_ITEM)) {
+                    mSelectedItemId = savedInstanceState.getLong(STATE_SELECTED_ITEM);
+                }
+            }
         }
     }
 
@@ -72,11 +83,21 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public void onPageSelected(int position) {
-        Log.v(LOG_TAG, "onPageSelected, hashCode=" + this.hashCode() + ", " + "position = [" + position + "]");
+        Log.v(LOG_TAG, "onPageSelected - new Page in Pager, hashCode=" + this.hashCode() + ", " + "position = [" + position + "]");
         if (mCursor != null) {
             mCursor.moveToPosition(position);
+            mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
         }
-        mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
+        Intent posChangedIntent = new Intent(BROADCAST_POSITION_CHANGE);
+        posChangedIntent.putExtra(CURSOR_POSITION, position);
+        sendBroadcast(posChangedIntent);
+//        Log.v(LOG_TAG, "onPageSelected - position change broadcasted, hashCode=" + this.hashCode() + ", " + "position = [" + position + "]");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(STATE_SELECTED_ITEM, mSelectedItemId);
     }
 
     @Override
