@@ -160,7 +160,9 @@ public class ArticleDetailFragment extends Fragment{
                 .centerCrop()
                 .into(mPhotoView);
 
-        ((ArticleDetailActivity) getActivity()).scheduleStartPostponedTransition(mPhotoView);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ((ArticleDetailActivity) getActivity()).scheduleStartPostponedTransition(mPhotoView);
+        }
     }
 
 }

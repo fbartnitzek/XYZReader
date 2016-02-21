@@ -101,12 +101,16 @@ public class ArticleDetailActivity extends AppCompatActivity
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void scheduleStartPostponedTransition(final View sharedElement) {
+        // http://www.androiddesignpatterns.com/2015/03/activity-postponed-shared-element-transitions-part3b.html
         sharedElement.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
+                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public boolean onPreDraw() {
                         sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
-                        startPostponedEnterTransition();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            startPostponedEnterTransition();
+                        }
                         return true;
                     }
                 });

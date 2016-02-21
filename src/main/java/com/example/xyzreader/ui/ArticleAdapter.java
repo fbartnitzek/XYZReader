@@ -138,9 +138,5 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         return mCursor;
     }
 
-    //optional...?
-    //selectView
-    //getSelectedItemPosition
-
 
 }
