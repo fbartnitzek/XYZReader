@@ -83,7 +83,9 @@ public class MainActivity extends AppCompatActivity implements
         int columnCount = getResources().getInteger(R.integer.list_column_count);
         StaggeredGridLayoutManager sglm =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        //TODO: sglm.strategies...?
+        //sglm.strategies... none: stops in middle of transition - not specific to none ..., move items is too dynamic...
+//        sglm.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+//        sglm.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         mRecyclerView.setLayoutManager(sglm);
 
         registerReceiver(mBroadcastReceiver,
@@ -105,23 +107,22 @@ public class MainActivity extends AppCompatActivity implements
         registerReceiver(mRefreshingReceiver,
                 new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
         if (mRecyclerView != null) {
-//            Log.v(LOG_TAG, "onStart, hashCode=" + this.hashCode() + ", with recyclerview" + "");
             if (mPosition != RecyclerView.NO_POSITION){
                 mRecyclerView.scrollToPosition(mPosition);
             }
-//        } else {
-//            Log.v(LOG_TAG, "onStart, hashCode=" + this.hashCode() + ", without recyclerview..." + "");
         }
     }
 
     @Override
     protected void onStop() {
+        Log.v(LOG_TAG, "onStop, hashCode=" + this.hashCode() + ", " + "");
         super.onStop();
         unregisterReceiver(mRefreshingReceiver);
     }
 
     @Override
     protected void onDestroy() {
+        Log.v(LOG_TAG, "onDestroy, hashCode=" + this.hashCode() + ", " + "");
         super.onDestroy();
         if (mBroadcastReceiver != null){
             unregisterReceiver(mBroadcastReceiver);
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.v(LOG_TAG, "onSaveInstanceState, hashCode=" + this.hashCode() + ", " + "outState = [" + outState + "]");
         outState.putInt(CURRENT_POSITION, mPosition);
         super.onSaveInstanceState(outState);
     }

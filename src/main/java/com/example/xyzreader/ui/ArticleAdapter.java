@@ -104,11 +104,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         );
 
         // image
+        holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
         Glide.with(mContext)
                 .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
-                .centerCrop()
+//                .centerCrop() //just fills part of listview-image!
+                .fitCenter()
                 .into(holder.thumbnailView);
-        holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+
     }
 
     @Override
@@ -117,6 +119,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
     }
 
     public void swapCursor(Cursor newCursor) {
+        Log.v(LOG_TAG, "swapCursor, hashCode=" + this.hashCode() + ", " + "newCursor = [" + newCursor + "]");
         mCursor = newCursor;
         notifyDataSetChanged();
         //optional: hide empty view if itemCount>0

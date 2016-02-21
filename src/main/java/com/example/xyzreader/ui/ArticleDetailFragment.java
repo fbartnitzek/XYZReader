@@ -32,6 +32,7 @@ public class ArticleDetailFragment extends Fragment{
     private static final String LOG_TAG = ArticleDetailFragment.class.getName();
 
     public static final String ARG_ARTICLE = "arg_article";
+    private static final String STATE_ARTICLE = "state_article";
 
     private Article mArticle;
     private View mRootView;
@@ -67,15 +68,26 @@ public class ArticleDetailFragment extends Fragment{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreate, hashCode=" + this.hashCode() + ", " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ARTICLE)) {
             mArticle = getArguments().getParcelable(ARG_ARTICLE);
+        } else if (savedInstanceState.containsKey(STATE_ARTICLE)) {
+            mArticle = savedInstanceState.getParcelable(STATE_ARTICLE);
+            bindViews();
         }
 
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mArticle != null) {
+            outState.putParcelable(STATE_ARTICLE, mArticle);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -112,18 +124,6 @@ public class ArticleDetailFragment extends Fragment{
         });
 
         bindViews();
-
-        // worked once - but stopped working ...
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            Log.v(LOG_TAG, "onCreate, " + "sliding in ...?");
-//            Slide slide = new Slide(Gravity.BOTTOM);
-//            slide.addTarget(R.id.article_body);
-//            slide.setInterpolator(
-//                    AnimationUtils.loadInterpolator(
-//                            getActivity(), android.R.interpolator.linear_out_slow_in));
-//            slide.setDuration(1000L);
-//            getActivity().getWindow().setEnterTransition(slide);
-//        }
 
         return mRootView;
     }
