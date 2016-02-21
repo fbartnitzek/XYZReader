@@ -61,7 +61,6 @@ public class ArticleDetailFragment extends Fragment{
         arguments.putParcelable(ARG_ARTICLE, article);
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         fragment.setArguments(arguments);
-
         Log.v(LOG_TAG, "newInstance, " + "article= [" + article + "], hashcode=" + fragment.hashCode());
         return fragment;
     }
@@ -73,6 +72,7 @@ public class ArticleDetailFragment extends Fragment{
 
         if (getArguments().containsKey(ARG_ARTICLE)) {
             mArticle = getArguments().getParcelable(ARG_ARTICLE);
+            Log.v(LOG_TAG, "onCreate, hashCode=" + this.hashCode() + ", mArticle=" + mArticle + "]");
         } else if (savedInstanceState.containsKey(STATE_ARTICLE)) {
             mArticle = savedInstanceState.getParcelable(STATE_ARTICLE);
             bindViews();
@@ -97,6 +97,11 @@ public class ArticleDetailFragment extends Fragment{
                 + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.toolbar_photo);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mPhotoView.setTransitionName(
+                    Utilities.TRANSITION_NAME_IMAGE_VIEW + mArticle.getId());
+        }
 
         // actionbar
         mCollapsingToolbar = (CollapsingToolbarLayout) mRootView.findViewById(
@@ -129,17 +134,13 @@ public class ArticleDetailFragment extends Fragment{
     }
 
     private void bindViews() {
-        Log.v(LOG_TAG, "bindViews, hashCode=" + this.hashCode() + ", " + "");
         if (mRootView == null || mArticle == null) {
+            Log.v(LOG_TAG, "bindViews, hashCode=" + this.hashCode() + ", all null");
             return;
         }
         Log.v(LOG_TAG, "bindViews, hashCode=" + this.hashCode() + ", transitionName: " +
-                getString(R.string.transition_name_image_view) + "_" + mArticle.getId());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mPhotoView.setTransitionName(
-                    getString(R.string.transition_name_image_view) + "_" + mArticle.getId());
-        }
+                Utilities.TRANSITION_NAME_IMAGE_VIEW + mArticle.getId() + ", photo_url:" +
+                mArticle.getPhotoUrl());
 
         mCollapsingToolbar.setTitle(mArticle.getTitle());
         mActionBar.setTitle(mArticle.getTitle());
@@ -151,7 +152,6 @@ public class ArticleDetailFragment extends Fragment{
                                 System.currentTimeMillis()),
                         mArticle.getAuthor(),
                         Html.fromHtml(mArticle.getBody())));
-        Log.v(LOG_TAG, "bindViews, hashCode=" + this.hashCode() + ", photo_url:" + mArticle.getPhotoUrl());
 
         Glide.with(getActivity())
                 .load(mArticle.getPhotoUrl())

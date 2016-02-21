@@ -16,14 +16,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!--suppress AndroidLintContentDescription -->
-        <!-- TODO: confusing height -->
         <com.example.xyzreader.ui.DynamicHeightImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:background="@color/photo_placeholder"
-            android:transitionName="@string/transition_name_image_view"/>
+            android:transitionName="transition_default_name"/>
 
         <TextView
             android:id="@+id/article_title"

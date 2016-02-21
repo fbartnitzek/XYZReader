@@ -185,6 +185,13 @@ public class ArticleDetailActivity extends AppCompatActivity
         }
     }
 
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        // is not called ... :-(
+//        Log.v(LOG_TAG, "onActivityResult, hashCode=" + this.hashCode() + ", " + "requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
+
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         Log.v(LOG_TAG, "onLoaderReset, hashCode=" + this.hashCode() + ", " + "cursorLoader = [" + cursorLoader + "]");

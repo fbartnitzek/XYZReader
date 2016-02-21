@@ -37,7 +37,7 @@
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"
-                android:transitionName="@string/transition_name_image_view"/>
+                android:transitionName="transition_default_name"/>
 
             <!--<View-->
                 <!--android:layout_width="match_parent"-->

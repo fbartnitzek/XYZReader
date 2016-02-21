@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui;
 
+import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
@@ -8,12 +9,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -65,14 +69,14 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(long id, ArticleAdapter.ArticleViewHolder vh) {
                 Log.v(LOG_TAG, "onClick, " + "id = [" + id + "], vh = [" + vh
-                        + "], transitionName: " + getString(R.string.transition_name_image_view) + "_" + id);
+                        + "], transitionName: " + Utilities.TRANSITION_NAME_IMAGE_VIEW + id);
                 Bundle bundle = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     bundle = ActivityOptions
                             .makeSceneTransitionAnimation(
                                     MainActivity.this,
                                     vh.thumbnailView,
-                                    getString(R.string.transition_name_image_view) + "_" + id)
+                                    Utilities.TRANSITION_NAME_IMAGE_VIEW + id)
                             .toBundle();
                 }
                 startActivity(new Intent(Intent.ACTION_VIEW,
@@ -180,4 +184,41 @@ public class MainActivity extends AppCompatActivity implements
         mArticleAdapter.swapCursor(null);
     }
 
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        // is not called ... :-(
+        Log.v(LOG_TAG, "onActivityReenter, hashCode=" + this.hashCode() + ", " + "resultCode = [" + resultCode + "], data = [" + data + "]");
+        super.onActivityReenter(resultCode, data);
+
+        // postpone the shared element return transition
+        supportPostponeEnterTransition();
+    }
+
+    /**
+     * Schedules the shared element transition to be started immediately
+     * after the shared element has been measured and laid out within the
+     * activity's view hierarchy. Some common places where it might make
+     * sense to call this method are:
+     *
+     * (1) Inside a Fragment's onCreateView() method (if the shared element
+     *     lives inside a Fragment hosted by the called Activity).
+     *
+     * (2) Inside a Picasso Callback object (if you need to wait for Picasso to
+     *     asynchronously load/scale a bitmap before the transition can begin).
+     *
+     * (3) Inside a LoaderCallback's onLoadFinished() method (if the shared
+     *     element depends on data queried by a Loader).
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void scheduleStartPostponedTransition(final View sharedElement) {
+        sharedElement.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
+                        startPostponedEnterTransition();
+                        return true;
+                    }
+                });
+    }
 }

@@ -20,6 +20,8 @@ import android.text.format.DateUtils;
 
 public class Utilities {
 
+    public static String TRANSITION_NAME_IMAGE_VIEW = "transition_name_image_view_";
+
     public static String formatTimeSpan(long startMillis, long endMillis) {
         return  DateUtils.getRelativeTimeSpanString(
                     startMillis, endMillis, DateUtils.HOUR_IN_MILLIS,

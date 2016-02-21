@@ -2,6 +2,7 @@ package com.example.xyzreader.ui;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -104,12 +105,20 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         );
 
         // image
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            holder.thumbnailView.setTransitionName(Utilities.TRANSITION_NAME_IMAGE_VIEW + mCursor.getLong(ArticleLoader.Query._ID));
+            Log.v(LOG_TAG, "onBindViewHolder, " + "holder = [" + holder + "], position = [" + position
+                    + "], set TransitionName to " + Utilities.TRANSITION_NAME_IMAGE_VIEW + mCursor.getLong(ArticleLoader.Query._ID));
+        }
         holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
         Glide.with(mContext)
                 .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
 //                .centerCrop() //just fills part of listview-image!
                 .fitCenter()
                 .into(holder.thumbnailView);
+
+        // has no effect ...
+//        ((MainActivity)mContext).scheduleStartPostponedTransition(holder.thumbnailView);
 
     }
 
