@@ -25,6 +25,7 @@ public class Article implements Parcelable{
     private long publishedDate;
     private String body;
     private String photoUrl;
+    private long id;
 
     protected Article(Parcel in) {
         title = in.readString();
@@ -32,14 +33,16 @@ public class Article implements Parcelable{
         publishedDate = in.readLong();
         body = in.readString();
         photoUrl = in.readString();
+        id = in.readLong();
     }
 
-    public Article(String author, String body, String photoUrl, long publishedDate, String title) {
+    public Article(String author, String body, String photoUrl, long publishedDate, String title, long id) {
         this.author = author;
         this.body = body;
         this.photoUrl = photoUrl;
         this.publishedDate = publishedDate;
         this.title = title;
+        this.id = id;
     }
 
     public static final Creator<Article> CREATOR = new Creator<Article>() {
@@ -66,6 +69,7 @@ public class Article implements Parcelable{
         dest.writeLong(publishedDate);
         dest.writeString(body);
         dest.writeString(photoUrl);
+        dest.writeLong(id);
     }
 
     public String getAuthor() {
@@ -86,5 +90,9 @@ public class Article implements Parcelable{
 
     public String getTitle() {
         return title;
+    }
+
+    public long getId() {
+        return id;
     }
 }

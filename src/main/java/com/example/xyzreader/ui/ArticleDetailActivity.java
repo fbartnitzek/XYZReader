@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
@@ -7,12 +8,16 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.Article;
@@ -33,7 +38,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     private Cursor mCursor;
     private long mStartId;
 
-    private long mSelectedItemId;   //TODO: should be stored...
+    private long mSelectedItemId;
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
@@ -43,12 +48,15 @@ public class ArticleDetailActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onCreate, hashCode=" + this.hashCode() + ", " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
+
+        // what might that change...
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            getWindow().getDecorView().setSystemUiVisibility(
 //                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
 //                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 //        }
         setContentView(R.layout.activity_article_detail);
+        supportPostponeEnterTransition();
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -76,6 +84,48 @@ public class ArticleDetailActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Schedules the shared element transition to be started immediately
+     * after the shared element has been measured and laid out within the
+     * activity's view hierarchy. Some common places where it might make
+     * sense to call this method are:
+     *
+     * (1) Inside a Fragment's onCreateView() method (if the shared element
+     *     lives inside a Fragment hosted by the called Activity).
+     *
+     * (2) Inside a Picasso Callback object (if you need to wait for Picasso to
+     *     asynchronously load/scale a bitmap before the transition can begin).
+     *
+     * (3) Inside a LoaderCallback's onLoadFinished() method (if the shared
+     *     element depends on data queried by a Loader).
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void scheduleStartPostponedTransition(final View sharedElement) {
+        sharedElement.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
+                        startPostponedEnterTransition();
+                        return true;
+                    }
+                });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // enables reverse-element-transition on up-button
+        // https://guides.codepath.com/android/Shared-Element-Activity-Transition#3-start-activity
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                supportFinishAfterTransition();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         // nothing
@@ -91,7 +141,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         Intent posChangedIntent = new Intent(BROADCAST_POSITION_CHANGE);
         posChangedIntent.putExtra(CURSOR_POSITION, position);
         sendBroadcast(posChangedIntent);
-//        Log.v(LOG_TAG, "onPageSelected - position change broadcasted, hashCode=" + this.hashCode() + ", " + "position = [" + position + "]");
     }
 
     @Override
@@ -160,7 +209,8 @@ public class ArticleDetailActivity extends AppCompatActivity
                             mCursor.getString(ArticleLoader.Query.BODY),
                             mCursor.getString(ArticleLoader.Query.PHOTO_URL),
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-                            mCursor.getString(ArticleLoader.Query.TITLE)
+                            mCursor.getString(ArticleLoader.Query.TITLE),
+                            mCursor.getLong(ArticleLoader.Query._ID)
                     ));
         }
 

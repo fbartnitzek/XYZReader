@@ -64,14 +64,15 @@ public class MainActivity extends AppCompatActivity implements
         mArticleAdapter = new ArticleAdapter(this, new ArticleAdapter.ArticleAdapterOnClickHandler() {
             @Override
             public void onClick(long id, ArticleAdapter.ArticleViewHolder vh) {
-                Log.v(LOG_TAG, "onClick, " + "id = [" + id + "], vh = [" + vh + "]");
+                Log.v(LOG_TAG, "onClick, " + "id = [" + id + "], vh = [" + vh
+                        + "], transitionName: " + getString(R.string.transition_name_image_view) + "_" + id);
                 Bundle bundle = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     bundle = ActivityOptions
                             .makeSceneTransitionAnimation(
                                     MainActivity.this,
                                     vh.thumbnailView,
-                                    getString(R.string.transition_name_image_view))
+                                    getString(R.string.transition_name_image_view) + "_" + id)
                             .toBundle();
                 }
                 startActivity(new Intent(Intent.ACTION_VIEW,
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements
         registerReceiver(mBroadcastReceiver,
                 new IntentFilter(ArticleDetailActivity.BROADCAST_POSITION_CHANGE));
 
-        // TODO: restore?
         if (savedInstanceState == null) {
             refresh();
         }
@@ -109,14 +109,13 @@ public class MainActivity extends AppCompatActivity implements
             if (mPosition != RecyclerView.NO_POSITION){
                 mRecyclerView.scrollToPosition(mPosition);
             }
-        } else {
+//        } else {
 //            Log.v(LOG_TAG, "onStart, hashCode=" + this.hashCode() + ", without recyclerview..." + "");
         }
     }
 
     @Override
     protected void onStop() {
-//        Log.v(LOG_TAG, "onStop, hashCode=" + this.hashCode() + ", " + "");
         super.onStop();
         unregisterReceiver(mRefreshingReceiver);
     }
