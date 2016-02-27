@@ -19,6 +19,7 @@
 
     <style name="Theme.Bacon" parent="Base.Theme.Bacon"/>
 
+    <!-- by extending Theme.AppCompat.Light.NOACTIONBAR theme can use own Toolbar with much more flexibility -->
     <style name="Base.Theme.Bacon" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary_500</item>
         <item name="colorPrimaryDark">@color/primary_700</item>

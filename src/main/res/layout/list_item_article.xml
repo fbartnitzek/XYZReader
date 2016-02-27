@@ -5,10 +5,10 @@
                                     android:clickable="true"
                                     android:focusable="true"
                                     android:foreground="?selectableItemBackground"
-                                    android:layout_marginBottom="4dp"
-                                    android:layout_marginLeft="4dp"
-                                    android:layout_marginRight="4dp"
-                                    android:layout_marginTop="4dp">
+                                    android:layout_marginBottom="@dimen/margin_cardview"
+                                    android:layout_marginLeft="@dimen/margin_cardview"
+                                    android:layout_marginRight="@dimen/margin_cardview"
+                                    android:layout_marginTop="@dimen/margin_cardview">
     <!-- borders needed to separate items in list - maybe something else than other surface ... -->
 
     <LinearLayout
@@ -19,7 +19,7 @@
         <com.example.xyzreader.ui.DynamicHeightImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/list_item_view_height"
             android:background="@color/photo_placeholder"
             android:transitionName="transition_default_name"/>
 
@@ -30,10 +30,10 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="4"
-            android:paddingBottom="4dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
+            android:paddingBottom="@dimen/list_item_title_padding_bottom"
+            android:paddingLeft="@dimen/list_item_title_padding_other"
+            android:paddingRight="@dimen/list_item_title_padding_other"
+            android:paddingTop="@dimen/list_item_title_padding_other"
             android:textColor="@color/primary_300"/>
 
         <TextView
@@ -43,11 +43,11 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingBottom="@dimen/list_item_subtitle_padding"
+            android:paddingLeft="@dimen/list_item_subtitle_padding"
+            android:paddingRight="@dimen/list_item_subtitle_padding"
             android:singleLine="true"
-            android:textColor="#6000"/>
+            android:textColor="@color/darker_grey"/>
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

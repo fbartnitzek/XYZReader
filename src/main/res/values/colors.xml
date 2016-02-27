@@ -24,5 +24,6 @@
     <color name="primary_300">#4db6ac</color>
     <color name="heading_white">#ffffff</color>
     <color name="some_color">#8fff</color>
+    <color name="darker_grey">#6000</color>
     <color name="window_background">#FFF5F5F5</color>
 </resources>

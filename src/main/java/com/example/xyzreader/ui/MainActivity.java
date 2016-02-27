@@ -184,6 +184,11 @@ public class MainActivity extends AppCompatActivity implements
         mArticleAdapter.swapCursor(null);
     }
 
+    //TODO: 2 new links for reenter-bugs on changed-pager-pic
+    // https://guides.codepath.com/android/Shared-Element-Activity-Transition
+    // http://www.thedroidsonroids.com/blog/android/meaningful-motion-with-shared-element-transition-and-circular-reveal-animation/
+    // TODO: try stuff from there...
+
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
         // is not called ... :-(
